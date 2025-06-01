@@ -4,8 +4,7 @@ const MOTION_SPEED = 80
 const FRICTION_FACTOR = 0.89
 const TAN30DEG = tan(deg_to_rad(30))
 
-
-
+@onready var _animation_player = $AnimationPlayer
 
 # Called when the node enters the scene tree for the first time.
 #var target = position
@@ -20,7 +19,7 @@ var tile_position := Vector2i()  # hard-coded starting tile position
 var tile_path = []  # of tile positions
 var world_path = []  # of global coordinates
 var screen_size # Size of the game window.
-@export var speed = 400
+@export var speed = 100
 
 
 
@@ -45,10 +44,12 @@ func _input(event):
 		# 寻路
 
 		if pos_clicked in tile_map.valid_cells and not tile_position == pos_clicked:
+			_animation_player.play("Tank_moves")
+
 			var path_found = []
 			path_found = tile_map.new_find_path(tile_position, pos_clicked)
-			#print('获得路径', path_found)
-			line_2d.default_color = Color.WEB_MAROON
+			print('Path found', path_found)
+			#line_2d.default_color = Color.WEB_MAROON
 			
 			# keep both world and map position arrays in memory
 			tile_path = path_found
@@ -58,7 +59,7 @@ func _input(event):
 				#print("路径：", path_position)
 				world_path.append(path_position)
 			# draw line
-			line_2d.points = PackedVector2Array(world_path)
+			#line_2d.points = PackedVector2Array(world_path)
 			# remove first (current) position 移除当前坐标点
 			tile_path.remove_at(0)
 			world_path.remove_at(0)
@@ -71,7 +72,7 @@ func _input(event):
 func _physics_process(delta):
 	if target:
 		velocity = position.direction_to(target) * speed
-		# look_at(target)
+		look_at(target)
 		if position.distance_to(target) > 5:
 			move_and_slide()
 		else:
@@ -79,3 +80,5 @@ func _physics_process(delta):
 			if tile_path.size() > 0:
 				tile_position = tile_path.pop_front()
 				target = world_path.pop_front()
+			else:
+				_animation_player.stop()

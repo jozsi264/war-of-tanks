@@ -1,17 +1,63 @@
-[gd_scene load_steps=4 format=3 uid="uid://b8emyytxt478w"]
+[gd_scene load_steps=7 format=3 uid="uid://b8emyytxt478w"]
 
 [ext_resource type="Script" uid="uid://cpm8wl4ql7s3d" path="res://scripts/player.gd" id="1_enhoi"]
-[ext_resource type="Texture2D" uid="uid://c814a0i2fe07d" path="res://assets/sprite.png" id="2_kxkps"]
+[ext_resource type="Texture2D" uid="uid://d30116xj3kwiu" path="res://assets/tank/tank.gif.png" id="2_g2els"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_hpthj"]
 radius = 26.9968
+
+[sub_resource type="Animation" id="Animation_qhqgy"]
+resource_name = "Tank_moves"
+length = 0.5
+loop_mode = 1
+step = 0.033
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 1,
+"values": [1, 2, 3, 4, 0]
+}
+
+[sub_resource type="Animation" id="Animation_dqkch"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_qlg0r"]
+_data = {
+&"RESET": SubResource("Animation_dqkch"),
+&"Tank_moves": SubResource("Animation_qhqgy")
+}
 
 [node name="Player" type="CharacterBody2D"]
 motion_mode = 1
 script = ExtResource("1_enhoi")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-texture = ExtResource("2_kxkps")
+rotation = 1.5708
+texture = ExtResource("2_g2els")
+hframes = 6
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_hpthj")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_qlg0r")
+}
