@@ -13,6 +13,9 @@ const TAN30DEG = tan(deg_to_rad(30))
 @onready var tile_map = $"../TileMap"
 @onready var line_2d = $"../Line2D"
 
+var angle_to_player
+var should_rotate = false
+
 #var target = position
 #var target_pos_clicked
 var tile_position := Vector2i()  # hard-coded starting tile position
@@ -66,19 +69,33 @@ func _input(event):
 			# get next position to move to 提出下一个位置的坐标点
 			tile_position = tile_path.pop_front()
 			target = world_path.pop_front()
+			should_rotate = true
 		else:
 			printerr("need move OR out of area!")
 
 func _physics_process(delta):
 	if target:
-		velocity = position.direction_to(target) * speed
-		look_at(target)
-		if position.distance_to(target) > 5:
-			move_and_slide()
+		if should_rotate:
+			print(should_rotate, ' ', rotation, ' ', angle_to_player)
+
+			angle_to_player = global_position.direction_to(target).angle()
+			rotation = move_toward(rotation, angle_to_player, delta)
+
+			if angle_to_player == rotation:
+				print("rotation stops")
+				should_rotate = false
 		else:
-			# we've reached current destination, get the next one (if any left)
-			if tile_path.size() > 0:
-				tile_position = tile_path.pop_front()
-				target = world_path.pop_front()
+			#print("moving", Time.get_ticks_msec())
+
+			velocity = position.direction_to(target) * speed
+			#look_at(target)
+			if position.distance_to(target) > 5:
+				move_and_slide()
 			else:
-				_animation_player.stop()
+				# we've reached current destination, get the next one (if any left)
+				if tile_path.size() > 0:
+					tile_position = tile_path.pop_front()
+					target = world_path.pop_front()
+					should_rotate = true
+				else:
+					_animation_player.stop()
