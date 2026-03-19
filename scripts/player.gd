@@ -82,12 +82,11 @@ func snap_to_fix_angle(angle):
 		if angle > swapped_angle - max_difference and angle < swapped_angle + max_difference:
 			angle = swapped_angle
 		
-	return angle
+	return roundi(angle)
 
 func _physics_process(delta):
 	if target:
 		if should_rotate:
-			var delta_sign  = 1
 			#print(
 				#'PRE',
 				#global_position, 
@@ -110,11 +109,19 @@ func _physics_process(delta):
 				)
 			)
 
-			# FIXME
-			#if player_initial_view_angle == 150 and angle_to_player == -90:
-				#angle_to_player = 150 + 60
+			if rotation_degrees == 150 and angle_to_player == -90:
+				rotation_degrees -= 360
+			if rotation_degrees == -150 and angle_to_player == 150:
+				rotation_degrees += 360
+			# IDE ketszer fut be, meghozza a 150 -> -150 atmenetnel
+			if rotation_degrees == 90 and angle_to_player == -150:
+				rotation_degrees -= 360
+			if rotation_degrees == -150 and angle_to_player == 90:
+				rotation_degrees += 360
+			if rotation_degrees == -90 and angle_to_player == 150:
+				rotation_degrees += 360
 			
-			rotation_degrees = move_toward(rotation_degrees, angle_to_player, delta_sign * delta * 100)
+			rotation_degrees = move_toward(rotation_degrees, angle_to_player, delta * 100)
 
 			print(
 				'POST',
@@ -126,7 +133,7 @@ func _physics_process(delta):
 			)
 			
 			if snap_to_fix_angle(angle_to_player) == snap_to_fix_angle(rotation_degrees):
-				print("rotation stops")
+				print("rotation stops", snap_to_fix_angle(angle_to_player))
 				should_rotate = false
 		else:
 			rotation_degrees = snap_to_fix_angle(rotation_degrees)

@@ -52,6 +52,7 @@ script = ExtResource("1_enhoi")
 [node name="Sprite2D" type="Sprite2D" parent="."]
 rotation = 1.5708
 texture = ExtResource("2_g2els")
+offset = Vector2(0, -9)
 hframes = 6
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
